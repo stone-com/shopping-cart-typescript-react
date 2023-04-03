@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement } from 'react';
+import { ChangeEvent, ReactElement, memo } from 'react';
 import { CartItemType } from '../context/CartProvider';
 import { ReducerAction } from '../context/CartProvider';
 import { ReducerActionType } from '../context/CartProvider';
@@ -81,4 +81,25 @@ const CartLineItem = ({ item, dispatch, REDUCER_ACTIONS }: PropsType) => {
 
   return content;
 };
-export default CartLineItem;
+
+// function to check if 2 items are equal to each other
+function areItemsEqual(
+  { item: prevItem }: PropsType,
+  { item: nextItem }: PropsType
+) {
+  return Object.keys(prevItem).every((key) => {
+    return (
+      prevItem[key as keyof CartItemType] ===
+      nextItem[key as keyof CartItemType]
+    );
+  });
+}
+
+// memoize the line items so that if one changes, only that one will re render and the rest will not
+
+const MemoizedCartLineItem = memo<typeof CartLineItem>(
+  CartLineItem,
+  areItemsEqual
+);
+
+export default MemoizedCartLineItem;
